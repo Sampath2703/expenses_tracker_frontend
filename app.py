@@ -86,24 +86,37 @@ elif opt == "Update Expenses":
         try:
             st.write(response.json())
         except:
-             st.error(response.text)
+            st.error(response.text)
 
         if response.status_code == 200:
 
-            st.session_state.title = response.json()["expenses_data"]["title"]
-            st.session_state.amount = response.json()["expenses_data"]["amount"]
-            st.session_state.category = response.json()["expenses_data"]["category"]
-            st.session_state.payment_method = data["expenses_data"]["payment_method"]
-            st.session_state.spent_at = response.json()["expenses_data"]["spent_at"]
+            data = response.json()
+
+            if data.get("expenses_data"):
+
+                expense = data["expenses_data"]
+
+                st.session_state.title = expense["title"]
+                st.session_state.amount = expense["amount"]
+                st.session_state.category = expense["category"]
+                st.session_state.payment_method = expense["payment_method"]
+                st.session_state.spent_at = expense["spent_at"]
+
+            else:
+                st.error("Expense not found")
 
     title = st.text_input(
         "Title",
         value=st.session_state.get("title", "")
     )
+
     payment_method = st.selectbox(
-            "Payment Method",
-            ["💳 Card", "📲 UPI", "💵 Cash"]
-            )
+        "Payment Method",
+        ["💳 Card", "📲 UPI", "💵 Cash"],
+        index=["💳 Card", "📲 UPI", "💵 Cash"].index(
+            st.session_state.get("payment_method", "💳 Card")
+        )
+    )
 
     amount = st.number_input(
         "Amount",
@@ -121,10 +134,24 @@ elif opt == "Update Expenses":
             "🏥 Health",
             "🎬 Entertainment",
             "📦 Other"
-        ]
+        ],
+        index=[
+            "🍔 Food",
+            "✈️ Travel",
+            "🛍️ Shopping",
+            "💡 Bills",
+            "🏥 Health",
+            "🎬 Entertainment",
+            "📦 Other"
+        ].index(
+            st.session_state.get("category", "🍔 Food")
+        )
     )
 
-    spent_at = st.date_input("Spent At")
+    spent_at = st.date_input(
+        "Spent At",
+        value=st.session_state.get("spent_at")
+    )
 
     if st.button("Update Expense"):
 
@@ -142,8 +169,10 @@ elif opt == "Update Expenses":
         )
 
         if response.status_code == 200:
-            st.write(response.json())
             st.success("Expense updated successfully!")
+            st.write(response.json())
+        else:
+            st.error(response.json().get("message", "Update failed"))
 
 elif opt == "Delete Expenses":
 
