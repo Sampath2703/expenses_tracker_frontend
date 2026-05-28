@@ -182,22 +182,30 @@ elif opt == "Delete Expenses":
 
     st.header("Delete Expenses")
 
+    # ---------------- FETCH EXPENSES ----------------
     response = requests.get(f"{server_location}/get_expenses")
 
     if response.status_code == 200:
         try:
             expenses_data = response.json()
-            a = expenses_data.get("expenses", [])
-            pd_df = pd.DataFrame(a)
-            st.dataframe(pd_df)
-        except:
-            st.error("Invalid JSON response")
+            expenses_list = expenses_data.get("expenses", [])
+
+            if expenses_list:
+                df = pd.DataFrame(expenses_list)
+                st.dataframe(df)
+            else:
+                st.info("No expenses found")
+
+        except Exception:
+            st.error("Invalid JSON response from backend")
             st.write(response.text)
+
     else:
         st.error("Failed to fetch expenses")
         st.write(response.text)
 
-    expense_id_to_del = st.number_input("Enter id", min_value=1)
+    # ---------------- DELETE SECTION ----------------
+    expense_id_to_del = st.number_input("Enter Expense ID", min_value=1)
 
     if st.button("Delete Expense"):
 
@@ -205,12 +213,13 @@ elif opt == "Delete Expenses":
             f"{server_location}/delete_expense/{expense_id_to_del}"
         )
 
+        # ---------------- SAFE RESPONSE HANDLING ----------------
         if response.status_code == 200:
-            st.success("Expense Deleted Successfully")
             try:
-                st.write(response.json())
+                result = response.json()
+                st.success(result.get("message", "Deleted successfully"))
             except:
-                st.write(response.text)
+                st.success("Expense deleted successfully")
         else:
             st.error("Delete Failed")
             st.write(response.text)
