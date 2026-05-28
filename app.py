@@ -259,24 +259,54 @@ elif opt == "Search Expenses":
 
 
 elif opt == "Sort Expenses":
-    st.header("Sort Expenses")
-    sort_by = st.selectbox("Sort By", ["payment_method", "amount","category","spent_at"])
-    order_by = st.selectbox("Order By", ["asc", "desc"])
 
-    if st.button("Sort Expenses"):
-        response = requests.get(
-        f"{server_location}/sort_expenses",
-        params={"sort_by": sort_by, "order_by": order_by}
+    st.header("Sort Expenses")
+
+    sort_by = st.selectbox(
+        "Sort By",
+        ["payment_method", "amount", "category", "spent_at"]
     )
 
-    if response.status_code == 200:
-        data = response.json().get("expenses", [])
-        st.dataframe(pd.DataFrame(data))
-    else:
-        st.error(response.text)
+    order_by = st.selectbox(
+        "Order By",
+        ["asc", "desc"]
+    )
+
+    if st.button("Sort Expenses"):
+
+        # CREATE RESPONSE FIRST
+        response = requests.get(
+            f"{server_location}/sort_expenses",
+            params={
+                "sort_by": sort_by,
+                "order_by": order_by
+            }
+        )
+
+        # THEN CHECK STATUS
+        if response.status_code == 200:
+
+            try:
+                data = response.json().get("expenses", [])
+
+                if data:
+                    df = pd.DataFrame(data)
+                    st.dataframe(df)
+                else:
+                    st.info("No expenses found")
+
+            except Exception:
+                st.error("Invalid JSON response")
+                st.write(response.text)
+
+        else:
+            st.error("Sort failed")
+            st.write(response.text)
 
 elif opt == "Filter Expenses":
+
     st.header("Filter Expenses")
+
     Filter_by = st.selectbox(
         "Category",
         [
@@ -291,36 +321,65 @@ elif opt == "Filter Expenses":
     )
 
     if st.button("Filter Expenses"):
-        response = requests.get(
-        f"{server_location}/filter_expenses/{Filter_by}"
-    )
 
-    if response.status_code == 200:
-        data = response.json().get("expenses", [])
-        st.dataframe(pd.DataFrame(data))
-    else:
-        st.error(response.text)
+        response = requests.get(
+            f"{server_location}/filter_expenses/{Filter_by}"
+        )
+
+        if response.status_code == 200:
+
+            try:
+                data = response.json().get("expenses", [])
+
+                if data:
+                    df = pd.DataFrame(data)
+                    st.dataframe(df)
+                else:
+                    st.info("No matching expenses")
+
+            except Exception:
+                st.error("Invalid JSON response")
+                st.write(response.text)
+
+        else:
+            st.error("Filter failed")
+            st.write(response.text)
 
 
 elif opt == "Analyze Expenses":
-    st.header("Analyse Expenses")
+
+    st.header("Analyze Expenses")
+
     Analyze_by = st.selectbox(
         "Analyze By",
         [
             "category",
-            "created_at"
-            "payment_method"
+            "payment_method",
+            "spent_at"
         ]
     )
 
     if st.button("Analyze Expenses"):
+
         response = requests.get(
-        f"{server_location}/analyze_expenses/{Analyze_by}"
-    )
+            f"{server_location}/analyze_expenses/{Analyze_by}"
+        )
 
-    if response.status_code == 200:
-        data = response.json().get("expenses", [])
-        st.dataframe(pd.DataFrame(data))
-    else:
-        st.error(response.text)
+        if response.status_code == 200:
 
+            try:
+                data = response.json().get("expenses", [])
+
+                if data:
+                    df = pd.DataFrame(data)
+                    st.dataframe(df)
+                else:
+                    st.info("No analysis data found")
+
+            except Exception:
+                st.error("Invalid JSON response")
+                st.write(response.text)
+
+        else:
+            st.error("Analyze failed")
+            st.write(response.text)
