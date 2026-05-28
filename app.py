@@ -4,6 +4,8 @@ import pandas as pd
 
 server_location = st.secrets["backend_servers"]
 
+
+
 st.title("Expenses Tracker Management System")
 
 opt = st.sidebar.selectbox("select an option",["Add Expenses","View Expenses","Update Expenses", "Delete Expenses", "Search Expenses", "Sort Expenses", "Filter Expenses", "Analyze Expenses"])
@@ -12,6 +14,10 @@ if opt == "Add Expenses":
     st.header("Add Expenses")
     with st.form("add_expenses_form"):
         title = st.text_input("Title")
+        payment_method = st.selectbox(
+            "Payment Method",
+            ["💳 Card", "📲 UPI", "💵 Cash"]
+            )
         amount = st.number_input("Amount", min_value=0.0,step=1.0)
         CATEGORY_MAP = {
             "Food": "🍔 Food",
@@ -23,6 +29,7 @@ if opt == "Add Expenses":
             "Other": "📦 Other"
         }
         category_display = st.selectbox("Category", list(CATEGORY_MAP.values()))
+
         spent_date = st.date_input("Spent At")
         submit_button = st.form_submit_button("Add Expenses")
 
