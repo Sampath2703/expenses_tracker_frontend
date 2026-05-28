@@ -224,6 +224,39 @@ elif opt == "Delete Expenses":
             st.error("Delete Failed")
             st.write(response.text)
 
+elif opt == "Search Expenses":
+
+    st.header("Search Expenses")
+
+    search_text = st.text_input("Enter keyword (title or category)")
+
+    if st.button("Search Expenses"):
+
+        response = requests.get(
+            f"{server_location}/search_expenses",
+            params={"search_text": search_text}
+        )
+
+        # ---------------- SAFE RESPONSE HANDLING ----------------
+        if response.status_code == 200:
+            try:
+                data = response.json()
+                expenses = data.get("expenses", [])
+
+                if expenses:
+                    df = pd.DataFrame(expenses)
+                    st.dataframe(df)
+                else:
+                    st.info("No matching expenses found")
+
+            except Exception:
+                st.error("Invalid JSON response from backend")
+                st.write(response.text)
+
+        else:
+            st.error("Search failed")
+            st.write(response.text)
+
 
 elif opt == "Sort Expenses":
     st.header("Sort Expenses")
