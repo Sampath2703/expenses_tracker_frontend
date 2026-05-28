@@ -181,38 +181,40 @@ elif opt == "Update Expenses":
 elif opt == "Delete Expenses":
 
     st.header("Delete Expenses")
+
     response = requests.get(f"{server_location}/get_expenses")
-    expenses_data = response.json()
-    a = expenses_data["expenses"]
-    pd_df = pd.DataFrame(a)
-    st.dataframe(pd_df)
+
+    if response.status_code == 200:
+        try:
+            expenses_data = response.json()
+            a = expenses_data.get("expenses", [])
+            pd_df = pd.DataFrame(a)
+            st.dataframe(pd_df)
+        except:
+            st.error("Invalid JSON response")
+            st.write(response.text)
+    else:
+        st.error("Failed to fetch expenses")
+        st.write(response.text)
+
     expense_id_to_del = st.number_input("Enter id", min_value=1)
+
     if st.button("Delete Expense"):
 
         response = requests.delete(
             f"{server_location}/delete_expense/{expense_id_to_del}"
         )
+
         if response.status_code == 200:
             st.success("Expense Deleted Successfully")
-            st.write(response.json())
+            try:
+                st.write(response.json())
+            except:
+                st.write(response.text)
         else:
             st.error("Delete Failed")
             st.write(response.text)
 
-elif opt == "Search Expenses":
-    st.header("Search Expenses")
-    search_text = st.text_input("Text Input")
-
-    if st.button("Search"):
-        response = requests.get(f"{server_location}/search_expenses",params={"search_text": search_text})
-        if response.status_code == 200:
-            expenses_data = response.json()["expenses"]
-
-            if len(expenses_data) > 0:
-                    df = pd.DataFrame(expenses_data)
-                    st.dataframe(df)
-            else:
-                st.info("No matching expenses found")
 
 elif opt == "Sort Expenses":
     st.header("Sort Expenses")
