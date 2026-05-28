@@ -228,7 +228,7 @@ elif opt == "Search Expenses":
 
     st.header("Search Expenses")
 
-    search_text = st.number_inout("Enter keyword(title or category)")
+    search_text = st.text_input("Enter keyword(title or category)")
 
     if st.button("Search Expenses"):
 
