@@ -213,6 +213,9 @@ elif opt == "Delete Expenses":
             f"{server_location}/delete_expense/{expense_id}"
         )
 
+        st.write("STATUS:", response.status_code)
+        st.write("RESPONSE:", response.text)
+
         # ---------------- SAFE RESPONSE HANDLING ----------------
         if response.status_code == 200:
             try:
