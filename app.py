@@ -45,11 +45,12 @@ if opt == "Add Expenses":
         response=requests.post(f"{server_location}/expenses", json=expenses_data)
         
         st.write("STATUS:", response.status_code)
-        st.write("RESPONSE:", response.json())
-        if response.status_code == 200:
-            st.write(response.json())
-            st.info("Expenses added successfully!")
+        st.write("RAW RESPONSE:", response.text)
 
+        if response.status_code == 200:
+            st.success("Expense added successfully!")
+        else:
+            st.error("Backend error occurred")
          
 
 
