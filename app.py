@@ -93,12 +93,17 @@ elif opt == "Update Expenses":
             st.session_state.title = response.json()["expenses_data"]["title"]
             st.session_state.amount = response.json()["expenses_data"]["amount"]
             st.session_state.category = response.json()["expenses_data"]["category"]
+            st.session_state.payment_method = data["expenses_data"]["payment_method"]
             st.session_state.spent_at = response.json()["expenses_data"]["spent_at"]
 
     title = st.text_input(
         "Title",
         value=st.session_state.get("title", "")
     )
+    payment_method = st.selectbox(
+            "Payment Method",
+            ["💳 Card", "📲 UPI", "💵 Cash"]
+            )
 
     amount = st.number_input(
         "Amount",
@@ -125,6 +130,7 @@ elif opt == "Update Expenses":
 
         updated_expenses_data = {
             "title": title,
+            "payment_method": payment_method,
             "amount": amount,
             "category": category,
             "spent_at": str(spent_at)
@@ -177,7 +183,7 @@ elif opt == "Search Expenses":
 
 elif opt == "Sort Expenses":
     st.header("Sort Expenses")
-    sort_by = st.selectbox("Sort By", ["amount","category","spent_at"])
+    sort_by = st.selectbox("Sort By", ["payment_method", "amount","category","spent_at"])
     order_by = st.selectbox("Order By", ["asc", "desc"])
 
     if st.button("Sort Expenses"):
@@ -217,6 +223,7 @@ elif opt == "Analyze Expenses":
         [
             "category",
             "created_at"
+            "payment_method"
         ]
     )
 
