@@ -205,12 +205,12 @@ elif opt == "Delete Expenses":
         st.write(response.text)
 
     # ---------------- DELETE SECTION ----------------
-    expense_id_to_del = st.number_input("Enter Expense ID", min_value=1)
+    expense_id = st.number_input("Enter Expense ID", min_value=1)
 
     if st.button("Delete Expense"):
 
         response = requests.delete(
-            f"{server_location}/delete_expense/{expense_id_to_del}"
+            f"{server_location}/delete_expense/{expense_id}"
         )
 
         # ---------------- SAFE RESPONSE HANDLING ----------------
