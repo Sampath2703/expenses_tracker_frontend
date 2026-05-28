@@ -83,7 +83,10 @@ elif opt == "Update Expenses":
             f"{server_location}/get_expenses_single/{expenses_id}"
         )
 
-        st.write(response.json())
+        try:
+            st.write(response.json())
+        except:
+             st.error(response.text)
 
         if response.status_code == 200:
 
