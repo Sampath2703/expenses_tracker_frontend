@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd   
 
-server_location = st.secrets["backend_servers"]
+server_location = st.secrets["backend_server"]
 
 
 
