@@ -37,12 +37,15 @@ if opt == "Add Expenses":
         expenses_data = {
             
             "title":title,
+            "payment_method":payment_method,
             "amount":amount,
             "category":category_display,
             "spent_at": str(spent_date)
         }
         response=requests.post(f"{server_location}/expenses", json=expenses_data)
-
+        
+        st.write("STATUS:", response.status_code)
+        st.write("RESPONSE:", response.json())
         if response.status_code == 200:
             st.write(response.json())
             st.info("Expenses added successfully!")
